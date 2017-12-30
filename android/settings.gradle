@@ -1,0 +1,3 @@
+rootProject.name = 'YT'
+
+include ':app'
