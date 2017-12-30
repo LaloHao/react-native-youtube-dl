@@ -1,57 +1,48 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+/* global global */
 
-import React, { Component } from 'react';
+import React, { cloneElement, Component } from 'react';
+
 import {
-  Platform,
-  StyleSheet,
+  View,
   Text,
-  View
+  AsyncStorage,
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import { Provider } from 'react-redux';
+import createStore from './source/Store.js';
+const store = createStore();
 
-export default class App extends Component<{}> {
+import Router from './source/Router.js';
+import { persistStore } from 'redux-persist';
+
+export default class index extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      rehydrated: false,
+    };
+  }
+
+  componentWillMount() {
+    const config = {
+      storage: AsyncStorage,
+      blacklist: ['router'],
+    };
+
+    persistStore(store, config, () => {
+      this.setState({rehydrated: true});
+    });
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
+    if (!this.state.rehydrated)
+      return null;
+    else
+      return (
+        <Provider store={store}>
+          <Router/>
+        </Provider>
+      );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
