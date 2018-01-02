@@ -5,10 +5,12 @@ import {
   StackNavigator,
 } from 'react-navigation';
 
+import DownloadScreen from './DownloadScreen.js';
 import FolderSelectionScreen from './FolderSelectionScreen.js';
 
 export const Router = StackNavigator(
   {
+    Download: {screen: DownloadScreen},
     FolderSelection: {screen: FolderSelectionScreen},
   }, {headerMode: () => null}
 );
