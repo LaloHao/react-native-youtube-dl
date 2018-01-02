@@ -15,8 +15,6 @@ const store = createStore();
 import Router from './source/Router.js';
 import { persistStore } from 'redux-persist';
 
-console.ignoredYellowBox = ['Setting a timer'];
-
 export default class index extends Component {
   constructor(props){
     super(props);
