@@ -41,9 +41,21 @@ export default class DownloadScreen extends Component {
       data: 0,
       file: '',
       loading: false,
+      connected: false,
     };
 
+  }
+
+  componentDidMount() {
     this.socket = io('http://192.168.1.15:3000');
+
+    this.socket.on('connect', () => {
+      this.setState({ connected: true });
+    });
+
+    this.socket.on('disconnect', () => {
+      this.setState({ connected: false });
+    });
 
     this.socket.on('info', (info) => {
       const {
@@ -166,6 +178,26 @@ export default class DownloadScreen extends Component {
 
   }
 
+  connectionStatus() {
+    const { connected } = this.state;
+    const status = connected? 'connected': 'disconnected';
+    const color = connected? '#00ff00': 'red';
+
+    return (
+      <View style={styles.bottom}>
+        <Icon
+          color={color}
+          name="circle"
+          size={15}>
+        </Icon>
+        <Text style={styles.buttonText}>
+          {status}
+        </Text>
+      </View>
+    );
+
+  }
+
   render() {
     const {
       url,
@@ -205,6 +237,7 @@ export default class DownloadScreen extends Component {
         </TextInput>
         {this.renderDownloadButton()}
         {this.status()}
+        {this.connectionStatus()}
       </View>
     );
   }
@@ -236,4 +269,11 @@ const styles = StyleSheet.create({
     paddingLeft: 10*WidthUnit,
     color: "rgba(49,49,49,0.9)"
   },
+  bottom: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    alignSelf: 'flex-end',
+    padding: ScreenWidth*0.03,
+  }
 });
